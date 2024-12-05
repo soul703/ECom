@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Đơn Hàng Của Tôi</title>
+</head>
+<body>
+<section>
+	<div class="container mt-5 p-5">
+		<div class="row">
+			<p class="text-center fs-3">Đơn Hàng Của Tôi</p>
+
+			<!-- Hiển thị thông báo thành công -->
+			<th:block th:if="${session.succMsg}">
+				<p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
+				<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
+
+			<!-- Hiển thị thông báo lỗi -->
+			<th:block th:if="${session.errorMsg}">
+				<p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+				<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
+
+			<!-- Bảng đơn hàng -->
+			<div class="col-md-12">
+				<table class="table table-bordered card-sh">
+					<thead>
+					<tr>
+						<th scope="col">Mã Đơn Hàng</th>
+						<th scope="col">Ngày Đặt</th>
+						<th scope="col">Chi Tiết Sản Phẩm</th>
+						<th scope="col">Giá</th>
+						<th scope="col">Trạng Thái</th>
+						<th scope="col">Hành Động</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="o:${orders}">
+						<th scope="row">[[${o.orderId}]]</th>
+						<td>[[${o.orderDate}]]</td>
+						<td>[[${o.product.title}]]</td>
+						<td>Số Lượng: [[${o.quantity}]] <br>Giá: [[${o.price}]] <br>Tổng Giá: [[${o.quantity * o.price}]]</td>
+						<td>[[${o.status}]]</td>
+						<td>
+							<!-- Hiển thị nút hủy đơn khi trạng thái không phải "Cancelled" -->
+							<th:block th:if="${o.status != 'Cancelled'}">
+								<a th:href="@{'/user/update-status?id=' + ${o.id} + '&st=6'}" class="btn btn-sm btn-danger">Hủy</a>
+							</th:block>
+							<!-- Nếu trạng thái là "Cancelled", nút hủy bị vô hiệu -->
+							<th:block th:unless="${o.status != 'Cancelled'}">
+								<a href="#" class="btn btn-sm btn-danger disabled">Hủy</a>
+							</th:block>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</section>
+</body>
+</html>
